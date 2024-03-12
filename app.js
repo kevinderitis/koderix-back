@@ -5,6 +5,7 @@ import gptRouter from './src/routes/gptRouter.js';
 const app = express();
 const PORT = 8080;
 
+app.use(express.static('public'));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
