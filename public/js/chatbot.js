@@ -1,5 +1,5 @@
 async function sendMessage(message) {
-    const url = 'http://localhost:3000/chat';  
+    const url = '/gpt/assistant';  
     const data = {
       prompt: message
     };

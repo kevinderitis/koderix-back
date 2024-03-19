@@ -3,136 +3,161 @@ import config from '../config/config.js';
 
 const openai = new OpenAI({ apiKey: config.OPEN_AI_API_KEY });
 
+export class OpenAIError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'OpenAIError';
+    }
+};
 
-// async function main() {
-//   const emptyThread = await openai.beta.threads.create();
+const createAndRun = async (msg) => {
+    try {
+        const run = await openai.beta.threads.createAndRun({
+            assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4",
+            thread: {
+                messages: [{ role: "user", content: msg }],
+            },
+        });
+        return run;
+    } catch (error) {
+        throw new OpenAIError('Error al crear y ejecutar el hilo.');
+    }
+};
 
-//   console.log(emptyThread);
-// }
-
-// main();
-
-// async function runFunct() {
-//     const run = await openai.beta.threads.runs.create(
-//       "thread_TlLmIVbblS0g4thgnKoFjNKG",
-//       { assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4" }
-//     );
-
-//     console.log(run);
-//   }
-
-// runFunct()
-
-
-// async function addMsg() {
-//     const threadMessages = await openai.beta.threads.messages.create(
-//       "thread_TlLmIVbblS0g4thgnKoFjNKG",
-//       { role: "user", content: "Hola" }
-//     );
-
-//     console.log(threadMessages);
-//     console.log(threadMessages.content)
-//   }
-
-//   addMsg();
-
-// async function runF() {
-//   const run = await openai.beta.threads.createAndRun({
-//     assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4",
-//     thread: {
-//       messages: [
-//         { role: "user", content: "Hola!" },
-//       ],
-//     },
-//   });
-
-//   console.log(run);
-// }
-
-// runF();
-
-const createAndRun = async msg => {
-    const run = await openai.beta.threads.createAndRun({
-        assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4",
-        thread: {
-            messages: [
-                { role: "user", content: msg },
-            ],
-        },
-    });
-
-    return run;
-}
+const getThread = async (threadId) => {
+    try {
+        const runs = await openai.beta.threads.runs.list(threadId);
+        return runs.data[0];
+    } catch (error) {
+        throw new OpenAIError('Error al obtener el hilo.');
+    }
+};
 
 const addMessage = async (msg, threadId) => {
+    try {
+        const threadMessages = await openai.beta.threads.messages.create(threadId, {
+            role: "user",
+            content: msg,
+        });
+        return threadMessages;
+    } catch (error) {
+        throw new OpenAIError('Error al añadir mensaje al hilo.');
+    }
+};
 
-    const runs = await openai.beta.threads.runs.list(
-        threadId
-      );
+const listMessages = async (threadId) => {
+    try {
+        let threadMessages = await openai.beta.threads.messages.list(threadId);
 
-    //   if(runs){
-    //     const run = await openai.beta.threads.runs.cancel(
-    //         'thread_m0YHQqsvmNBwvvqUwFFZllgY',
-    //         'run_MVXOIB6TqrBdyepvuWlsZNZZ'
-    //       );
-    //     console.log('ok')
-    //   }
+        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user') {
+            await sleep(2000);
+            threadMessages = await openai.beta.threads.messages.list(threadId);
+        }
 
-    const threadMessages = await openai.beta.threads.messages.create(
-        threadId,
-        { role: "user", content: msg }
-    );
+        return threadMessages.data;
+    } catch (error) {
+        throw new OpenAIError('Error al listar mensajes del hilo.');
+    }
+};
 
-    console.log(threadMessages);
-    console.log(threadMessages.content)
-    return threadMessages;
+const runThread = async (threadId) => {
+    try {
+        const run = await openai.beta.threads.runs.create(threadId, {
+            assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4",
+        });
+        return run;
+    } catch (error) {
+        throw new OpenAIError('Error al ejecutar el hilo.');
+    }
+};
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const listMessages = async threadId => {
-    const threadMessages = await openai.beta.threads.messages.list(
-        threadId
-    );
+const waitForThreadResolution = async (threadId) => {
+    try {
+        let thread = await getThread(threadId);
+        let i = 0;
+        while (thread.status !== "completed" && thread.status !== "expired" && thread.status === "in_progress") {
+            await sleep(1000);
+            thread = await getThread(threadId);
 
-    return threadMessages.data;
-}
-
-const runThread = async threadId => {
-    const run = await openai.beta.threads.runs.create(
-        threadId,
-      { assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4" }
-    );
-    return run;
-  }
-
-
-// async function listMsg() {
-//     const threadMessages = await openai.beta.threads.messages.list(
-//         "thread_vNgppHbqbhFIlBv4ZwrMz6Br"
-//     );
-
-//     console.log(threadMessages.data[0].content);
-// }
-
-// listMsg();
+            if (thread.status === "requires_action") {
+                return {
+                    status: "requires_action",
+                    email:
+                        thread.required_action.submit_tool_outputs.tool_calls[0].function
+                            .arguments,
+                };
+            }
+        }
+    } catch (error) {
+        throw new OpenAIError('Error al esperar la resolución del hilo.');
+    }
+};
 
 
+const validateThread = async (threadId) => {
+    let attempts = 5;
+
+    while (attempts > 0) {
+        try {
+            const run = await getThread(threadId);
+
+            if (run.status === 'requires_action') {
+                return {
+                    response: {
+                        action: 'email',
+                        email: run.required_action.submit_tool_outputs.tool_calls[0].function
+                            .arguments
+                    }
+                };
+            } else if (run.status !== 'in_progress') {
+                return {
+                    response: {
+                        result: 'completed'
+                    }
+                };
+            }
+
+            await sleep(5000);
+            attempts--;
+        } catch (error) {
+            throw new OpenAIError('Error al validar el hilo');
+        }
+    }
+
+    throw new OpenAIError('Se agotaron los intentos');
+};
 
 export const sendMessage = async (prompt, threadId) => {
-    let response = {};
+    let messages;
+    let response;
     try {
         if (!threadId) {
             let thread = await createAndRun(prompt);
-            response.threadId = thread.thread_id;
-            response.messages = await listMessages(thread);
-        } else {
+            threadId = thread.thread_id;
+        }
+
+        let threadObj = await validateThread(threadId);
+
+        if (threadObj.response.action) {
+            console.log('Se requiere acción:', threadObj.response);
+            response = `Ya tenemos tu email '${threadObj.response.email}' de contacto, pronto te vamos a enviar una invitación para la charla técnica y explicarte como continuar con el proceso. `
+        } else if (threadObj.response.result === 'completed') {
+            console.log('El hilo se ha completado exitosamente');
             await addMessage(prompt, threadId);
             await runThread(threadId);
-            let msgs = await listMessages(threadId);
-            response.messages = msgs;
+            messages = await listMessages(threadId);
+            response = messages ? messages[0].content[0].text.value : 'Aguardame un minuto';
+        } else {
+            console.log('El hilo no está en progreso ni requiere acción');
         }
+
     } catch (error) {
         console.log(error);
+        throw error;
     }
-    console.log(response);
     return response;
 };
