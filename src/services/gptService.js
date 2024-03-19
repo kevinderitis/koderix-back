@@ -109,8 +109,8 @@ const validateThread = async (threadId) => {
                 return {
                     response: {
                         action: 'email',
-                        email: run.required_action.submit_tool_outputs.tool_calls[0].function
-                            .arguments
+                        email: JSON.parse(run.required_action.submit_tool_outputs.tool_calls[0].function
+                            .arguments).email
                     }
                 };
             } else if (run.status !== 'in_progress') {
@@ -144,7 +144,8 @@ export const sendMessage = async (prompt, threadId) => {
 
         if (threadObj.response.action) {
             console.log('Se requiere acción:', threadObj.response);
-            response = `Ya tenemos tu email '${threadObj.response.email}' de contacto, pronto te vamos a enviar una invitación para la charla técnica y explicarte como continuar con el proceso. `
+            let email = threadObj.response.email;
+            response = `Ya tenemos tu email '${email}' de contacto, pronto te vamos a enviar una invitación para la charla técnica y explicarte como continuar con el proceso. `
         } else if (threadObj.response.result === 'completed') {
             console.log('El hilo se ha completado exitosamente');
             await addMessage(prompt, threadId);
