@@ -1,9 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import gptRouter from './src/routes/gptRouter.js';
+import config from './src/config/config.js';
 
 const app = express();
-const PORT = 8080;
+const PORT = config.PORT || 8080;
 
 app.use(express.static('public'));
 app.use(cookieParser());
