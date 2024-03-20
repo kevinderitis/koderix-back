@@ -2,6 +2,7 @@ import { sendMessage, OpenAIError } from "../services/gptService.js";
 
 export const chat = async (req, res) => {
     try {
+        console.log(`Sending message thread ${req.body.threadId}: ${req.body.prompt}`)
         const response = await sendMessage(req.body.prompt, req.cookies.threadId);
         if (response.threadId) {
             res.cookie('threadId', response.threadId);

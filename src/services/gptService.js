@@ -49,8 +49,7 @@ const addMessage = async (msg, threadId) => {
 const listMessages = async (threadId) => {
     try {
         let threadMessages = await openai.beta.threads.messages.list(threadId);
-
-        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user') {
+        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user' ||  !threadMessages.data[0].content) {
             await sleep(2000);
             threadMessages = await openai.beta.threads.messages.list(threadId);
         }
@@ -82,8 +81,9 @@ const validateThread = async (threadId) => {
     while (attempts > 0) {
         try {
             const run = await getThread(threadId);
-
+            console.log(`Status run: ${run.status}`)
             if (run.status === 'requires_action') {
+                console.log(`Requires action`)
                 return {
                     response: {
                         action: 'email',
@@ -122,11 +122,13 @@ export const sendMessage = async (prompt, threadId) => {
 
         if (threadObj.response.action) {
             response = await executeActionWithParams(threadObj.response.action, threadObj.response.params);
+            console.log(response)
         } else if (threadObj.response.result === 'completed') {
             console.log('El hilo se ha completado exitosamente');
             await addMessage(prompt, threadId);
             await runThread(threadId);
             messages = await listMessages(threadId);
+            console.log(messages[0]);
             response = messages ? messages[0].content[0].text.value : 'Aguardame un minuto';
         } else {
             console.log('El hilo no está en progreso ni requiere acción');
