@@ -315,7 +315,18 @@ a:focus {
   padding: 10px 15px;
   background-color: #2c72b8a2;
   color: #ffffff;
-  border-radius: 0;
+  border-radius: 20px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border: none;
+}
+
+#btn-mas-info {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #2c72b8a2;
+  color: #ffffff;
+  border-radius: 20px;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
   border: none;
@@ -983,12 +994,12 @@ a:focus {
     padding: 10px 15px;
     background-color: #dfe3e7a2;
     color: #ffffff;
-    border-radius: 0;
+    border-radius: 20px;
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
     border: none;
     position: absolute;
-    left: 50%;
+    left: 70%;
     transform: translateX(-50%);
   }
 }

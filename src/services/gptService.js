@@ -76,29 +76,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const waitForThreadResolution = async (threadId) => {
-    try {
-        let thread = await getThread(threadId);
-        let i = 0;
-        while (thread.status !== "completed" && thread.status !== "expired" && thread.status === "in_progress") {
-            await sleep(1000);
-            thread = await getThread(threadId);
-
-            if (thread.status === "requires_action") {
-                return {
-                    status: "requires_action",
-                    email:
-                        thread.required_action.submit_tool_outputs.tool_calls[0].function
-                            .arguments,
-                };
-            }
-        }
-    } catch (error) {
-        throw new OpenAIError('Error al esperar la resolución del hilo.');
-    }
-};
-
-
 const validateThread = async (threadId) => {
     let attempts = 5;
 
