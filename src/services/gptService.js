@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import config from '../config/config.js';
+import { executeActionWithParams } from '../functions/gptFunctions.js';
 
 const openai = new OpenAI({ apiKey: config.OPEN_AI_API_KEY });
 
@@ -13,7 +14,7 @@ export class OpenAIError extends Error {
 const createAndRun = async (msg) => {
     try {
         const run = await openai.beta.threads.createAndRun({
-            assistant_id: "asst_sksmUkXcO0OfByUPRT6l3GJ4",
+            assistant_id: config.ASSISTANT_ID,
             thread: {
                 messages: [{ role: "user", content: msg }],
             },
@@ -109,11 +110,11 @@ const validateThread = async (threadId) => {
                 return {
                     response: {
                         action: 'email',
-                        email: JSON.parse(run.required_action.submit_tool_outputs.tool_calls[0].function
-                            .arguments).email
+                        params: JSON.parse(run.required_action.submit_tool_outputs.tool_calls[0].function
+                            .arguments)
                     }
                 };
-            } else if (run.status !== 'in_progress') {
+            } else if (run.status !== 'in_progress') { // queued tener en cuenta
                 return {
                     response: {
                         result: 'completed'
@@ -143,9 +144,7 @@ export const sendMessage = async (prompt, threadId) => {
         let threadObj = await validateThread(threadId);
 
         if (threadObj.response.action) {
-            console.log('Se requiere acción:', threadObj.response);
-            let email = threadObj.response.email;
-            response = `Ya tenemos tu email '${email}' de contacto, pronto te vamos a enviar una invitación para la charla técnica y explicarte como continuar con el proceso. `
+            response = await executeActionWithParams(threadObj.response.action, threadObj.response.params);
         } else if (threadObj.response.result === 'completed') {
             console.log('El hilo se ha completado exitosamente');
             await addMessage(prompt, threadId);
