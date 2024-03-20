@@ -1001,6 +1001,7 @@ a:focus {
     position: absolute;
     left: 70%;
     transform: translateX(-50%);
+    margin-top: 30px;
   }
 }
 
