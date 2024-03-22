@@ -44,7 +44,7 @@ async function sendMessage(message) {
             }
           ];
           let response = await sendMessage(msg);
-          generate_message(response.response, 'user');
+          generate_message(response.message, 'user');
         
       })
       

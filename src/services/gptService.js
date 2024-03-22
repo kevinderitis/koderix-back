@@ -112,6 +112,7 @@ const validateThread = async (threadId) => {
 export const sendMessage = async (prompt, threadId) => {
     let messages;
     let response;
+    let respObj = {};
     try {
         if (!threadId) {
             let thread = await createAndRun(prompt);
@@ -138,5 +139,9 @@ export const sendMessage = async (prompt, threadId) => {
         console.log(error);
         throw error;
     }
-    return response;
+
+    respObj.response = response;
+    respObj.threadId = threadId;
+
+    return respObj;
 };
