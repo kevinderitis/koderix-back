@@ -49,7 +49,7 @@ const addMessage = async (msg, threadId) => {
 const listMessages = async (threadId) => {
     try {
         let threadMessages = await openai.beta.threads.messages.list(threadId);
-        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user' ||  !threadMessages.data[0].content) {
+        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user' || !threadMessages.data[0].content) {
             await sleep(2000);
             threadMessages = await openai.beta.threads.messages.list(threadId);
         }
@@ -71,6 +71,22 @@ const runThread = async (threadId) => {
     }
 };
 
+const submitToolOutputs = async (threadId, runId, callId) => {
+    const run = await openai.beta.threads.runs.submitToolOutputs(
+        threadId,
+        runId,
+        {
+            tool_outputs: [
+                {
+                    tool_call_id: callId,
+                    output: "Recibido",
+                },
+            ],
+        }
+    );
+    return run;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -84,6 +100,7 @@ const validateThread = async (threadId) => {
             console.log(`Status run: ${run.status}`)
             if (run.status === 'requires_action') {
                 console.log(`Requires action`)
+                await submitToolOutputs(threadId, run.id, run.required_action.submit_tool_outputs.tool_calls[0].id);
                 return {
                     response: {
                         action: 'email',
