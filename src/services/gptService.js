@@ -49,7 +49,7 @@ const addMessage = async (msg, threadId) => {
 const listMessages = async (threadId) => {
     try {
         let threadMessages = await openai.beta.threads.messages.list(threadId);
-        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user' || !threadMessages.data[0].content) {
+        while (threadMessages.data.length === 0 || threadMessages.data[0].role === 'user' || !threadMessages.data[0].content[0]) {
             await sleep(2000);
             threadMessages = await openai.beta.threads.messages.list(threadId);
         }
