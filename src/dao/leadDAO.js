@@ -15,18 +15,29 @@ db.once('open', () => {
 
 const createLead = async (threadId, email) => {
   try {
-    const newLead = new Lead({
-      threadId,
-      email
-    });
-    await newLead.save();
-    console.log('Lead creado exitosamente:', newLead);
-    return newLead;
+    let existingLead = await Lead.findOne({ threadId });
+
+    if (existingLead) {
+      existingLead.email = email;
+      await existingLead.save();
+      console.log('Lead actualizado exitosamente:', existingLead);
+      return existingLead;
+    } else {
+      const newLead = new Lead({
+        threadId,
+        email
+      });
+      await newLead.save();
+      console.log('Lead creado exitosamente:', newLead);
+      return newLead;
+    }
   } catch (error) {
-    console.error('Error al crear lead:', error.message);
-    throw new Error('No se pudo crear el lead');
+    console.error('Error al crear o actualizar lead:', error.message);
+    throw new Error('No se pudo crear o actualizar el lead');
   }
 };
+
+
 
 const getAllLeads = async () => {
   try {

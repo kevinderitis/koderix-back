@@ -42,6 +42,14 @@ function validateEmail(txt) {
 
 $(function () {
   var INDEX = 0;
+
+  function sendInitialMessage() {
+    const initialMessage = "¡Hola! ¿En qué puedo ayudarte?";
+    generate_message(initialMessage, 'user');
+  }
+
+  sendInitialMessage();
+
   $("#chat-submit").click(async function (e) {
     e.preventDefault();
     var msg = $("#chat-input").val();
@@ -133,13 +141,13 @@ $(function () {
   //   $(".chat-box").toggle('scale');
   // })
   $("#chat-circle, #btn1-bot").click(function (event) {
-    event.preventDefault(); // Esto evita que el enlace siga su comportamiento predeterminado (navegar a una nueva página)
+    event.preventDefault();
     $("#chat-circle").toggle('scale');
     $(".chat-box").toggle('scale');
   });
 
   $("#btn-mas-info").click(function (event) {
-    event.preventDefault(); // Esto evita que el enlace siga su comportamiento predeterminado (navegar a una nueva página)
+    event.preventDefault();
     $("#chat-circle").toggle('scale');
     $(".chat-box").toggle('scale');
     $("#chat-input").val("Quisiera saber mas sobre Koderix");
