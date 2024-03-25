@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import config from '../config/config.js';
 import { executeActionWithParams } from '../functions/gptFunctions.js';
+import { createLead } from '../dao/leadDAO.js';
 
 const openai = new OpenAI({ apiKey: config.OPEN_AI_API_KEY });
 
@@ -100,12 +101,14 @@ const validateThread = async (threadId) => {
             console.log(`Status run: ${run.status}`)
             if (run.status === 'requires_action') {
                 console.log(`Requires action`)
+                let params = JSON.parse(run.required_action.submit_tool_outputs.tool_calls[0].function
+                    .arguments);
+                await createLead(threadId, params.email);
                 await submitToolOutputs(threadId, run.id, run.required_action.submit_tool_outputs.tool_calls[0].id);
                 return {
                     response: {
                         action: 'email',
-                        params: JSON.parse(run.required_action.submit_tool_outputs.tool_calls[0].function
-                            .arguments)
+                        params
                     }
                 };
             } else if (run.status !== 'in_progress') { // queued tener en cuenta
