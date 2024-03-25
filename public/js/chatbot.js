@@ -4,6 +4,9 @@ async function sendMessage(message) {
     prompt: message
   };
 
+  const messageInput = document.getElementById('chat-input');
+  messageInput.placeholder = "Escribiendo...";
+
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -16,6 +19,8 @@ async function sendMessage(message) {
     const responseData = await response.json();
 
     console.log(responseData);
+    messageInput.placeholder = "Escribe tu mensaje...";
+
     return responseData;
   } catch (error) {
     console.error('Error:', error);
