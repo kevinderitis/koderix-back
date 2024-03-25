@@ -26,6 +26,7 @@ function validateEmail(txt) {
   var patron = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (patron.test(txt)) {
+    console.log('Email validado, se va a enviar otro request')
     setTimeout(async function () {
       let response = await sendMessage(txt);
       generate_message(response.message, 'user');
