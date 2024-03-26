@@ -111,16 +111,26 @@ const validateThread = async (threadId) => {
                         params
                     }
                 };
-            } else if (run.status !== 'in_progress') { // queued tener en cuenta
+            } else if (run.status === 'completed') { // queued tener en cuenta
                 return {
                     response: {
-                        result: 'completed'
+                        result: run.status
                     }
                 };
+            } else if (run.status === 'queued' || run.status === 'in_progress') {
+                console.log(`Still in progress or queued...`);
+                await sleep(5000);
+                attempts--;
+
+                if (attempts === 0 && (run.status === 'queued' || run.status === 'in_progress')) {
+                    return {
+                        response: {
+                            result: 'timeout'
+                        }
+                    };
+                }
             }
 
-            await sleep(5000);
-            attempts--;
         } catch (error) {
             throw new OpenAIError('Error al validar el hilo');
         }
@@ -153,6 +163,7 @@ export const sendMessage = async (prompt, threadId) => {
             response = messages ? messages[0].content[0].text.value : 'Aguardame un minuto';
         } else {
             console.log('El hilo no está en progreso ni requiere acción');
+            response = 'Aguardame cinco minutos, por favor.'
         }
 
     } catch (error) {
