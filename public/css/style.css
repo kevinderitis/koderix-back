@@ -1067,16 +1067,13 @@ a:focus {
 
 .arrow-icon {
   width: 100px;
-  /* Ajusta el ancho según necesites */
   height: auto;
-  /* Para mantener la proporción */
   transform: rotate(180deg);
-  /* Rota la flecha 180 grados */
 }
 
 .step-number {
   font-size: 46px;
-  color: #ffffff; /* Color del número */
+  color: #ffffff;
   font-weight: bold;
   font-family: 'Arial', sans-serif;
   text-align: center;
@@ -1092,4 +1089,107 @@ a:focus {
 .logo-center {
   display: flex;
   justify-content: flex-start;
+}
+
+
+.pricing_section {
+  padding: 60px 0;
+  /* background-color: #fff; */
+  background-color: #00204a;
+}
+
+.heading_container {
+  margin-bottom: 50px;
+}
+
+.heading_container h2 {
+  font-size: 36px;
+}
+
+.pricing_container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pricing_container .box {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  width: calc(33.333% - 20px);
+  transition: transform 0.3s ease;
+}
+
+.pricing_container .box:hover {
+  transform: translateY(-10px);
+}
+
+.pricing_container .box .heading_box h4 {
+  font-size: 24px;
+  color: #28A745;
+  margin-bottom: 20px;
+}
+
+.pricing_container .box .detail_box h5 {
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.pricing_container .box .detail_box ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 30px;
+}
+
+.pricing_container .box .detail_box ul li {
+  font-size: 16px;
+  color: #4c8559;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pricing_container .box .detail_box ul li::before {
+  content: '✔';
+  color: #31d056;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.pricing_container .box .btn2 {
+  background-color: #2ad352;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.pricing_container .box .btn2:hover {
+  background-color: #28A745;
+}
+
+@media (max-width: 992px) {
+  .pricing_container .box {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing_container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pricing_container .box {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
 }

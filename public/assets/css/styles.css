@@ -1,0 +1,181 @@
+.caracteristicas {
+    position: relative; 
+    z-index: 1; 
+    padding: 50px 0; 
+}
+
+.caracteristicas::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/bg-pagina-web-a-medida.jpg'); 
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.3; 
+    z-index: -1; 
+}
+
+.width_wrap {
+    flex: 1; 
+}
+
+.texto-imagen {
+    display: flex;
+    align-items: flex-start;
+}
+
+.texto {
+    flex: 1;
+}
+
+.imagen-caracteristicas {
+    width: 600px; 
+    margin-left: 20px; 
+}
+
+.items {
+    margin-bottom: 20px; 
+}
+
+.width_wrap2 {
+    display: flex; 
+    align-items: flex-start;
+    justify-content: flex-start; 
+    flex-direction: column;
+}
+
+.seguimiento {
+    position: relative; 
+    z-index: 1; 
+    padding: 50px 0; 
+    margin-bottom: 100px;
+}
+
+.seguimiento::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/bg-te-acompanamos.jpg'); 
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.3; 
+    z-index: -1; 
+}
+
+.seguimiento-content {
+    display: flex; 
+    align-items: flex-start;
+}
+
+.seguimiento-img {
+    width: 560px; 
+    height: auto; 
+    margin-right: 200px; 
+}
+
+.extras .width_wrap img {
+    max-width: 200px;
+    padding: 20px;
+}
+
+.video-background {
+    position: relative; 
+    z-index: 1; 
+    padding: 50px 0; 
+}
+
+.video-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/bg-video.jpg'); 
+    background-size: cover; 
+    background-position: center;
+    opacity: 0.3; 
+    z-index: -1; 
+}
+
+@media (max-width: 768px) {
+    .imagen-caracteristicas {
+        display: none;
+    }
+
+    .seguimiento-img {
+        display: none;
+    }
+}
+
+.contacto {
+    background-image: url('./assets/img/bg-contacto.jpg'); /* Cambia esta URL por tu imagen de fondo */
+    background-size: cover;
+    background-position: center;
+    padding: 50px 0;
+    text-align: center;
+    color: white;
+}
+
+.contacto .width_wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.contacto .tit {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.contacto .bajada {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.whatsapp-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #25d366;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.whatsapp-btn i.material-icons {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.envio-exito, .envio-error {
+    display: none;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.envio-exito span, .envio-error span {
+    font-weight: bold;
+}
+
+.redes {
+    width: 90%; 
+    max-width: 600px; 
+    /* border-radius: 15px;  */
+    /* box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5); */
+    transition: all 0.3s ease-in-out; 
+}
+
+
+/* .redes:hover {
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.7); 
+    transform: scale(1.05); 
+} */
